@@ -150,7 +150,7 @@ with col_left:
         st.markdown("""
         <p style="font-size: 13px; margin-bottom: 12px; color: inherit;">FnGuide에서 수집한 재무 및 컨센서스 지표를 12개의 차트로 표시합니다.</p>
         <div style="font-size: 13px; line-height: 1.65;">
-        1. <b>EPS</b> (연결 연간 및 YoY 증가율)<br>
+        1. <b>EPS & YoY 증가율</b> (연결 연간)<br>
         2. <b>Earnings(Q)</b> (분기 실적)<br>
         3. <b>Earnings(Y)</b> (연간 실적)<br>
         4. <b>OPM(Q)</b> (분기 영업이익률)<br>
@@ -167,7 +167,7 @@ with col_left:
 
 
 # ==============================================================================
-# RIGHT PANEL: 제목 및 10개 차트 순차적 표시
+# RIGHT PANEL: 제목 및 12개 차트 순차적 표시
 # ==============================================================================
 with col_right:
     # 1. Right Panel Title Header (35 ShortSelling style #8AB4F8)
