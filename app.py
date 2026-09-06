@@ -5,7 +5,6 @@ Data Source: https://wcomp.fnguide.com/
 
 import streamlit as st
 import pandas as pd
-from pykrx.website.krx.market.ticker import StockTicker
 import fnguide_api
 import charts
 import importlib
@@ -44,6 +43,7 @@ st.markdown("""
 def load_stock_tickers():
     """상장 종목 전체 리스트 가져오기 (pykrx StockTicker 및 FDR 폴백)"""
     try:
+        from pykrx.website.krx.market.ticker import StockTicker
         st_ticker = StockTicker()
         df = st_ticker.listed
         if not df.empty and '종목' in df.columns:
