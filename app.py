@@ -148,18 +148,20 @@ with col_left:
     with st.container(border=True):
         st.markdown("**💡 대시보드 안내**")
         st.markdown("""
-        <p style="font-size: 13px; margin-bottom: 12px; color: inherit;">FnGuide에서 수집한 재무 및 컨센서스 지표를 10개의 차트로 표시합니다.</p>
+        <p style="font-size: 13px; margin-bottom: 12px; color: inherit;">FnGuide에서 수집한 재무 및 컨센서스 지표를 12개의 차트로 표시합니다.</p>
         <div style="font-size: 13px; line-height: 1.65;">
         1. <b>EPS</b> (연결 연간 및 YoY 증가율)<br>
         2. <b>Earnings(Q)</b> (분기 실적)<br>
         3. <b>Earnings(Y)</b> (연간 실적)<br>
         4. <b>OPM(Q)</b> (분기 영업이익률)<br>
         5. <b>OPM(Y)</b> (연간 영업이익률)<br>
-        6. <b>ROE</b> (연간 자기자본이익률)<br>
-        7. <b>Free Cash Flow</b> (현금흐름)<br>
-        8. <b>컨센서스 시계열 추이(Q)</b><br>
-        9. <b>컨센서스 시계열 추이(Y)</b><br>
-        10. <b>적정주가 추이</b> (증권사별)
+        6. <b>PER</b> (연간 주가수익비율)<br>
+        7. <b>PBR</b> (연간 주가순자산비율)<br>
+        8. <b>ROE</b> (연간 자기자본이익률)<br>
+        9. <b>Free Cash Flow</b> (현금흐름)<br>
+        10. <b>컨센서스 시계열 추이(Q)</b><br>
+        11. <b>컨센서스 시계열 추이(Y)</b><br>
+        12. <b>적정주가 추이</b> (증권사별)
         </div>
         """, unsafe_allow_html=True)
 
@@ -238,7 +240,31 @@ with col_right:
                 st.dataframe(fin_data['df_opm_y'], use_container_width=True)
 
         # ----------------------------------------------------------------------
-        # Chart 6: ROE - 자기자본이익률 추이 (연결 연간, 8개년)
+        # Chart 6: PER - 주가수익비율 추이 (연결 연간, 8개년)
+        # ----------------------------------------------------------------------
+        with st.container(border=True):
+            if 'df_per_y' in fin_data and not fin_data['df_per_y'].empty:
+                fig_per = charts.plot_per_chart(fin_data['df_per_y'])
+                st.plotly_chart(fig_per, use_container_width=True)
+                with st.expander("📊 PER 원본 데이터 확인"):
+                    st.dataframe(fin_data['df_per_y'], use_container_width=True)
+            else:
+                st.info("6. PER: 해당 종목의 PER 데이터가 제공되지 않습니다.")
+
+        # ----------------------------------------------------------------------
+        # Chart 7: PBR - 주가순자산비율 추이 (연결 연간, 8개년)
+        # ----------------------------------------------------------------------
+        with st.container(border=True):
+            if 'df_pbr_y' in fin_data and not fin_data['df_pbr_y'].empty:
+                fig_pbr = charts.plot_pbr_chart(fin_data['df_pbr_y'])
+                st.plotly_chart(fig_pbr, use_container_width=True)
+                with st.expander("📊 PBR 원본 데이터 확인"):
+                    st.dataframe(fin_data['df_pbr_y'], use_container_width=True)
+            else:
+                st.info("7. PBR: 해당 종목의 PBR 데이터가 제공되지 않습니다.")
+
+        # ----------------------------------------------------------------------
+        # Chart 8: ROE - 자기자본이익률 추이 (연결 연간, 8개년)
         # ----------------------------------------------------------------------
         with st.container(border=True):
             if 'df_roe_y' in fin_data and not fin_data['df_roe_y'].empty:
@@ -247,10 +273,10 @@ with col_right:
                 with st.expander("📊 ROE 원본 데이터 확인"):
                     st.dataframe(fin_data['df_roe_y'], use_container_width=True)
             else:
-                st.info("6. ROE: 해당 종목의 ROE 데이터가 제공되지 않습니다.")
+                st.info("8. ROE: 해당 종목의 ROE 데이터가 제공되지 않습니다.")
 
         # ----------------------------------------------------------------------
-        # Chart 7: Free Cash Flow (연간/분기 그룹 막대)
+        # Chart 9: Free Cash Flow (연간/분기 그룹 막대)
         # ----------------------------------------------------------------------
         with st.container(border=True):
             col_fcf_t, col_fcf_s = st.columns([3, 1])
@@ -281,7 +307,7 @@ with col_right:
                     st.info("해당 주기의 Free Cash Flow 데이터가 없습니다.")
 
         # ----------------------------------------------------------------------
-        # Chart 8: 컨센서스 시계열 추이(Q) (연결 분기 기준)
+        # Chart 10: 컨센서스 시계열 추이(Q) (연결 분기 기준)
         # ----------------------------------------------------------------------
         with st.container(border=True):
             if cns_q_data and cns_q_data.get('periods'):
@@ -290,8 +316,8 @@ with col_right:
                 q_period_labels = {p['YYMM']: p.get('YYMM_F', p['YYMM']) for p in q_periods}
 
                 # Metric & Period selectors ("추정 대상 지표" comes before "추정 대상 분기")
-                col_m8, col_p8 = st.columns([1, 1])
-                with col_m8:
+                col_m10, col_p10 = st.columns([1, 1])
+                with col_m10:
                     selected_q_metric = st.selectbox(
                         "추정 대상 지표",
                         options=list(CNS_METRIC_OPTIONS.keys()),
@@ -299,7 +325,7 @@ with col_right:
                         index=0,
                         key="select_cns_q_metric"
                     )
-                with col_p8:
+                with col_p10:
                     selected_q_period = st.selectbox(
                         "추정 대상 분기",
                         options=q_period_options,
@@ -332,10 +358,10 @@ with col_right:
                     else:
                         st.info("해당 지표 및 분기의 컨센서스 시계열 데이터가 없습니다.")
             else:
-                st.info("8. 컨센서스 시계열 추이(Q): 해당 종목의 분기 컨센서스 추이 데이터가 제공되지 않습니다.")
+                st.info("10. 컨센서스 시계열 추이(Q): 해당 종목의 분기 컨센서스 추이 데이터가 제공되지 않습니다.")
 
         # ----------------------------------------------------------------------
-        # Chart 9: 컨센서스 시계열 추이(Y) (연결 연간 기준)
+        # Chart 11: 컨센서스 시계열 추이(Y) (연결 연간 기준)
         # ----------------------------------------------------------------------
         with st.container(border=True):
             if cns_y_data and cns_y_data.get('periods'):
@@ -344,8 +370,8 @@ with col_right:
                 y_period_labels = {p['YYMM']: p.get('YYMM_F', p['YYMM']) for p in y_periods}
 
                 # Metric & Period selectors ("추정 대상 지표" comes before "추정 대상 연도")
-                col_m9, col_p9 = st.columns([1, 1])
-                with col_m9:
+                col_m11, col_p11 = st.columns([1, 1])
+                with col_m11:
                     selected_y_metric = st.selectbox(
                         "추정 대상 지표",
                         options=list(CNS_METRIC_OPTIONS.keys()),
@@ -353,7 +379,7 @@ with col_right:
                         index=0,
                         key="select_cns_y_metric"
                     )
-                with col_p9:
+                with col_p11:
                     selected_y_period = st.selectbox(
                         "추정 대상 연도",
                         options=y_period_options,
@@ -385,10 +411,10 @@ with col_right:
                     else:
                         st.info("해당 지표 및 연도의 컨센서스 시계열 데이터가 없습니다.")
             else:
-                st.info("9. 컨센서스 시계열 추이(Y): 해당 종목의 연간 컨센서스 추이 데이터가 제공되지 않습니다.")
+                st.info("11. 컨센서스 시계열 추이(Y): 해당 종목의 연간 컨센서스 추이 데이터가 제공되지 않습니다.")
 
         # ----------------------------------------------------------------------
-        # Chart 10: 적정 주가 추이 (증권사별 적정주가 & Consensus 직선)
+        # Chart 12: 적정 주가 추이 (증권사별 적정주가 & Consensus 직선)
         # ----------------------------------------------------------------------
         with st.container(border=True):
             fig_target = charts.plot_target_price_chart(target_data)

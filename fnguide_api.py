@@ -279,6 +279,22 @@ def get_financial_highlight_data(cmp_cd: str) -> Optional[Dict[str, Any]]:
         'ROE(%)': y_roe_vals
     })
 
+    # PER (Y) (연간) - 8개년 (추정치 3개년 포함)
+    y_per_row = y_rows.get('PER') or y_rows.get('PER(배)')
+    y_per_vals = [_to_float(y_per_row.get(c)) if y_per_row else None for c in annual_cols]
+    df_per_y = pd.DataFrame({
+        'Period': annual_labels,
+        'PER(배)': y_per_vals
+    })
+
+    # PBR (Y) (연간) - 8개년 (추정치 3개년 포함)
+    y_pbr_row = y_rows.get('PBR') or y_rows.get('PBR(배)')
+    y_pbr_vals = [_to_float(y_pbr_row.get(c)) if y_pbr_row else None for c in annual_cols]
+    df_pbr_y = pd.DataFrame({
+        'Period': annual_labels,
+        'PBR(배)': y_pbr_vals
+    })
+
     return {
         'annual_labels': annual_labels,
         'quarter_labels': quarter_labels,
@@ -289,7 +305,9 @@ def get_financial_highlight_data(cmp_cd: str) -> Optional[Dict[str, Any]]:
         'y_net_name': y_net_name,
         'df_opm_q': df_opm_q,
         'df_opm_y': df_opm_y,
-        'df_roe_y': df_roe_y
+        'df_roe_y': df_roe_y,
+        'df_per_y': df_per_y,
+        'df_pbr_y': df_pbr_y
     }
 
 

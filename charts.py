@@ -244,12 +244,138 @@ def plot_opm_chart(df_opm: pd.DataFrame, is_quarter: bool = True) -> go.Figure:
     return fig
 
 
+def plot_per_chart(df_per: pd.DataFrame) -> go.Figure:
+    """
+    6. PER - 주가수익비율 추이 (연결 연간):
+    'Financial Highlight'의 'PER' 데이터(8개년, 추정치 3개년 포함)를 꺾은선 그래프로 표시.
+    """
+    title_text = "<b>6. PER - 주가수익비율 추이 (연결 연간)</b>"
+    fig = go.Figure()
+
+    if df_per.empty or 'PER(배)' not in df_per.columns:
+        fig.add_annotation(
+            text="PER 데이터가 존재하지 않습니다.",
+            showarrow=False,
+            font=dict(size=14, color=THEME['text_muted']),
+            xref="paper",
+            yref="paper",
+            x=0.5,
+            y=0.5
+        )
+        fig.update_layout(COMMON_LAYOUT, title=dict(text=title_text, font=dict(color=THEME['text_main'])), height=400)
+        return fig
+
+    fig.add_trace(
+        go.Scatter(
+            x=df_per['Period'],
+            y=df_per['PER(배)'],
+            name="PER(배)",
+            mode='lines+markers+text',
+            line=dict(color='#A855F7', width=2.5),
+            marker=dict(size=8, color='#A855F7', line=dict(color='#F8FAFC', width=1.5)),
+            text=[f"{val:.2f}배" if pd.notnull(val) else "" for val in df_per['PER(배)']],
+            textposition="top center",
+            textfont=dict(size=11, color='#E9D5FF'),
+            hovertemplate="<b>%{x}</b><br>PER: %{y:.2f}배<extra></extra>"
+        )
+    )
+
+    fig.update_layout(
+        COMMON_LAYOUT,
+        title=dict(text=title_text, font=dict(size=16, color=THEME['text_main'])),
+        xaxis=dict(
+            title=None,
+            showgrid=False,
+            linecolor=THEME['border_color'],
+            tickfont=dict(color=THEME['text_body'], size=11)
+        ),
+        yaxis=dict(
+            title="PER (배)",
+            title_font=dict(size=12, color=THEME['text_muted']),
+            ticksuffix="배",
+            tickformat=",.2f",
+            showgrid=True,
+            gridcolor=THEME['grid_color'],
+            linecolor=THEME['border_color'],
+            zeroline=True,
+            zerolinecolor=THEME['border_color'],
+            zerolinewidth=1.5,
+            tickfont=dict(color=THEME['text_body'], size=11)
+        ),
+        height=400
+    )
+    return fig
+
+
+def plot_pbr_chart(df_pbr: pd.DataFrame) -> go.Figure:
+    """
+    7. PBR - 주가순자산비율 추이 (연결 연간):
+    'Financial Highlight'의 'PBR' 데이터(8개년, 추정치 3개년 포함)를 꺾은선 그래프로 표시.
+    """
+    title_text = "<b>7. PBR - 주가순자산비율 추이 (연결 연간)</b>"
+    fig = go.Figure()
+
+    if df_pbr.empty or 'PBR(배)' not in df_pbr.columns:
+        fig.add_annotation(
+            text="PBR 데이터가 존재하지 않습니다.",
+            showarrow=False,
+            font=dict(size=14, color=THEME['text_muted']),
+            xref="paper",
+            yref="paper",
+            x=0.5,
+            y=0.5
+        )
+        fig.update_layout(COMMON_LAYOUT, title=dict(text=title_text, font=dict(color=THEME['text_main'])), height=400)
+        return fig
+
+    fig.add_trace(
+        go.Scatter(
+            x=df_pbr['Period'],
+            y=df_pbr['PBR(배)'],
+            name="PBR(배)",
+            mode='lines+markers+text',
+            line=dict(color='#06B6D4', width=2.5),
+            marker=dict(size=8, color='#06B6D4', line=dict(color='#F8FAFC', width=1.5)),
+            text=[f"{val:.2f}배" if pd.notnull(val) else "" for val in df_pbr['PBR(배)']],
+            textposition="top center",
+            textfont=dict(size=11, color='#A5F3FC'),
+            hovertemplate="<b>%{x}</b><br>PBR: %{y:.2f}배<extra></extra>"
+        )
+    )
+
+    fig.update_layout(
+        COMMON_LAYOUT,
+        title=dict(text=title_text, font=dict(size=16, color=THEME['text_main'])),
+        xaxis=dict(
+            title=None,
+            showgrid=False,
+            linecolor=THEME['border_color'],
+            tickfont=dict(color=THEME['text_body'], size=11)
+        ),
+        yaxis=dict(
+            title="PBR (배)",
+            title_font=dict(size=12, color=THEME['text_muted']),
+            ticksuffix="배",
+            tickformat=",.2f",
+            showgrid=True,
+            gridcolor=THEME['grid_color'],
+            linecolor=THEME['border_color'],
+            zeroline=True,
+            zerolinecolor=THEME['border_color'],
+            zerolinewidth=1.5,
+            tickfont=dict(color=THEME['text_body'], size=11)
+        ),
+        height=400
+    )
+    return fig
+
+
 def plot_roe_chart(df_roe: pd.DataFrame) -> go.Figure:
     """
-    6. ROE - 자기자본이익률 추이 (연결 연간):
+    8. ROE - 자기자본이익률 추이 (연결 연간):
     'Financial Highlight'의 'ROE' 데이터(8개년, 추정치 3개년 포함)를 막대 그래프로 표시.
     """
-    title_text = "<b>6. ROE - 자기자본이익률 추이 (연결 연간)</b>"
+    title_text = "<b>8. ROE - 자기자본이익률 추이 (연결 연간)</b>"
     fig = go.Figure()
 
     if df_roe.empty or 'ROE(%)' not in df_roe.columns:
@@ -308,12 +434,12 @@ def plot_roe_chart(df_roe: pd.DataFrame) -> go.Figure:
 
 def plot_free_cash_flow_chart(fcf_data: Dict[str, Any], is_quarter: bool = False) -> go.Figure:
     """
-    7. Free Cash Flow 차트:
+    9. Free Cash Flow 차트:
     FnGuide 사이트의 'Free Cash Flow' 차트 양식을 그대로 복제하여 그룹 막대 그래프로 표시.
     (영업활동현금흐름, 투자활동현금흐름, 재무활동현금흐름)
     """
     freq_label = "분기" if is_quarter else "연간"
-    title_text = f"<b>7. Free Cash Flow (연결 {freq_label})</b>"
+    title_text = f"<b>9. Free Cash Flow (연결 {freq_label})</b>"
     df = fcf_data.get('df', pd.DataFrame())
 
     fig = go.Figure()
@@ -386,11 +512,11 @@ def plot_consensus_timeseries_chart(
     metric_label: str = "매출액"
 ) -> go.Figure:
     """
-    8. 컨센서스 시계열 추이(Q) & 9. 컨센서스 시계열 추이(Y):
+    10. 컨센서스 시계열 추이(Q) & 11. 컨센서스 시계열 추이(Y):
     FnGuide의 '컨센서스 시계열 추이' 차트를 복제하여 최고, 최저, 평균 컨센서스를 꺾은선으로 표시.
     지표별(매출액, 영업이익, 당기순이익, EPS, PER, PER(Fwd,12M)) 단위 및 축 포맷 동적 적용.
     """
-    chart_num = "8" if is_quarter else "9"
+    chart_num = "10" if is_quarter else "11"
     freq_label = "분기" if is_quarter else "연간"
     period_label = cns_data.get('period_label', '')
     title_text = f"<b>{chart_num}. 컨센서스 시계열 추이({('Q' if is_quarter else 'Y')}) - {metric_label} | {period_label} 기준 (연결 {freq_label})</b>"
@@ -514,12 +640,12 @@ def plot_consensus_timeseries_chart(
 
 def plot_target_price_chart(target_data: Dict[str, Any]) -> go.Figure:
     """
-    10. 적정 주가 추이 차트:
+    12. 적정 주가 추이 차트:
     '증권사별 적정주가 & 투자의견'의 '추정기관', '추정일자', '적정주가' 데이터를 가져와서 꺾은선 그래프로 표시.
     가로축: 날짜, 세로축: 주가(원).
     'Consensus'의 '적정주가'는 별도의 직선으로 표시.
     """
-    title_text = "<b>10. 적정 주가 추이 (증권사별 목표주가 및 Consensus)</b>"
+    title_text = "<b>12. 적정 주가 추이 (증권사별 목표주가 및 Consensus)</b>"
     df = target_data.get('df', pd.DataFrame())
     consensus_price = target_data.get('consensus_price')
 
