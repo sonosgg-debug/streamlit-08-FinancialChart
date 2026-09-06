@@ -146,12 +146,9 @@ with col_left:
         st.caption("데이터 출처: [FnGuide Company Guide](https://wcomp.fnguide.com/)")
 
     with st.container(border=True):
+        st.markdown("**💡 대시보드 안내**")
         st.markdown("""
-        **💡 대시보드 안내**
-        
-        우측 패널에 FnGuide에서 수집한 10개 재무 및 컨센서스 차트가 순서대로 표시됩니다.
-        """)
-        st.markdown("""
+        <p style="font-size: 13px; margin-bottom: 12px; color: inherit;">FnGuide에서 수집한 재무 및 컨센서스 지표를 10개의 차트로 표시합니다.</p>
         <div style="font-size: 13px; line-height: 1.65;">
         1. <b>EPS</b> (연결 연간 및 YoY 증가율)<br>
         2. <b>Earnings(Q)</b> (분기 실적)<br>
