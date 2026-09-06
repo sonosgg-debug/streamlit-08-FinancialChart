@@ -330,7 +330,8 @@ with col_right:
                         "추정 대상 분기",
                         options=q_period_options,
                         format_func=lambda x: f"{q_period_labels[x]} 기준",
-                        key="select_cns_q_period"
+                        index=0,
+                        key=f"select_cns_q_period_{active_code}"
                     )
                 
                 # Reload data if metric or period differs from default
@@ -384,7 +385,8 @@ with col_right:
                         "추정 대상 연도",
                         options=y_period_options,
                         format_func=lambda x: f"{y_period_labels[x]} 기준",
-                        key="select_cns_y_period"
+                        index=0,
+                        key=f"select_cns_y_period_{active_code}"
                     )
 
                 if selected_y_metric != '0' or selected_y_period != cns_y_data.get('selected_period'):
