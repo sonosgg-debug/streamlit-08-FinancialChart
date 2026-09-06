@@ -697,7 +697,7 @@ def plot_target_price_chart(target_data: Dict[str, Any]) -> go.Figure:
             go.Scatter(
                 x=x_range,
                 y=[consensus_price, consensus_price],
-                name=f"Consensus 적정주가 ({consensus_price:,.0f}원)",
+                name="Consensus 적정주가",
                 mode='lines',
                 line=dict(color=THEME['consensus_line'], width=2.5, dash='dash'),
                 hovertemplate=f"<b>Consensus 평균</b><br>적정주가: {consensus_price:,.0f}원<extra></extra>"
