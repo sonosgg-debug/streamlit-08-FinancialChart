@@ -118,7 +118,7 @@ with col_left:
 
         with st.form(key="stock_search_form"):
             selected_display = st.selectbox(
-                "종목코드 또는 종목명 직접 입력 / 선택",
+                "종목명(코드) 입력 / 선택",
                 options=tickers_df['display_name'].tolist(),
                 index=default_index,
                 help="키보드로 종목명(예: 삼성전자) 또는 종목코드(예: 005930)를 입력하여 검색할 수 있습니다."
@@ -150,18 +150,21 @@ with col_left:
         **💡 대시보드 안내**
         
         우측 패널에 FnGuide에서 수집한 10개 재무 및 컨센서스 차트가 순서대로 표시됩니다.
-
-        1. **EPS** (연결 연간 및 YoY 증가율)
-        2. **Earnings(Q)** (분기 실적)
-        3. **Earnings(Y)** (연간 실적)
-        4. **OPM(Q)** (분기 영업이익률)
-        5. **OPM(Y)** (연간 영업이익률)
-        6. **ROE** (연간 자기자본이익률)
-        7. **Free Cash Flow** (연간/분기 현금흐름)
-        8. **컨센서스 시계열 추이(Q)**
-        9. **컨센서스 시계열 추이(Y)**
-        10. **적정주가 추이** (증권사별 & Consensus)
         """)
+        st.markdown("""
+        <div style="font-size: 13px; line-height: 1.65;">
+        1. <b>EPS</b> (연결 연간 및 YoY 증가율)<br>
+        2. <b>Earnings(Q)</b> (분기 실적)<br>
+        3. <b>Earnings(Y)</b> (연간 실적)<br>
+        4. <b>OPM(Q)</b> (분기 영업이익률)<br>
+        5. <b>OPM(Y)</b> (연간 영업이익률)<br>
+        6. <b>ROE</b> (연간 자기자본이익률)<br>
+        7. <b>Free Cash Flow</b> (현금흐름)<br>
+        8. <b>컨센서스 시계열 추이(Q)</b><br>
+        9. <b>컨센서스 시계열 추이(Y)</b><br>
+        10. <b>적정주가 추이</b> (증권사별)
+        </div>
+        """, unsafe_allow_html=True)
 
 
 # ==============================================================================
