@@ -3,6 +3,7 @@
 Data Source: https://wcomp.fnguide.com/
 """
 
+import os
 import streamlit as st
 import pandas as pd
 import fnguide_api
@@ -12,9 +13,11 @@ importlib.reload(charts)
 importlib.reload(fnguide_api)
 
 # Page Configuration
+FAVICON_PATH = os.path.join(os.path.dirname(__file__), "favicon.png")
+
 st.set_page_config(
     page_title="한국 증시 종목별 실적 및 컨센서스 추이",
-    page_icon="📈",
+    page_icon=FAVICON_PATH if os.path.exists(FAVICON_PATH) else None,
     layout="wide",
     initial_sidebar_state="expanded"
 )
