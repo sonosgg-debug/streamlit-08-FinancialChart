@@ -96,6 +96,53 @@ def load_stock_tickers():
     return pd.DataFrame(list(fallback_data.items()), columns=['티커', '종목']).set_index('티커')
 
 
+COMMON_ALIASES = {
+    "현대자동차": "005380",
+    "LG엔솔": "373220",
+    "엘지에너지솔루션": "373220",
+    "삼전": "005930",
+    "하닉": "000660",
+    "하이닉스": "000660",
+}
+
+
+def resolve_ticker_code(input_str: str, tickers_df: pd.DataFrame) -> str:
+    """종목코드 또는 종목명을 입력받아 유효한 6자리 티커 코드를 반환"""
+    if not input_str:
+        return ""
+    raw = input_str.strip()
+    clean_no_space = raw.replace(" ", "").upper()
+
+    # 1. 별칭 사전 확인 (예: 현대자동차 -> 005380, 하이닉스 -> 000660)
+    if clean_no_space in COMMON_ALIASES:
+        return COMMON_ALIASES[clean_no_space]
+
+    # 2. 티커 인덱스에 정확히 존재하는 코드인 경우 (예: 005930, 000660, 00104K)
+    if not tickers_df.empty:
+        if raw in tickers_df.index:
+            return raw
+        if raw.upper() in tickers_df.index:
+            return raw.upper()
+
+    # 3. 6자리 순수 숫자인 경우 (신규 상장 등 인덱스에 아직 없더라도 직접 입력 허용)
+    if raw.isdigit() and len(raw) == 6:
+        return raw
+
+    # 4. 종목명 정확 일치 (공백 제거, 대소문자 무시)
+    if not tickers_df.empty and '종목' in tickers_df.columns:
+        names_no_space = tickers_df['종목'].astype(str).str.replace(" ", "").str.upper()
+        matched = tickers_df[names_no_space == clean_no_space]
+        if not matched.empty:
+            return str(matched.index[0]).strip()
+
+        # 5. 종목명 부분 일치 검색 (예: '하이닉스' -> SK하이닉스)
+        partial = tickers_df[names_no_space.str.contains(clean_no_space, regex=False)]
+        if not partial.empty:
+            return str(partial.index[0]).strip()
+
+    return ""
+
+
 CNS_METRIC_OPTIONS = {
     "0": "매출액",
     "1": "영업이익",
@@ -173,10 +220,10 @@ with col_left:
 
         # 종목코드 또는 종목명 직접 입력란
         manual_input = st.text_input(
-            "또는 종목명 / 종목코드 직접 입력",
+            "종목명 / 종목코드 직접 입력",
             value="",
-            placeholder=f"예: 005930 또는 삼성전자",
-            help="종목코드 6자리(예: 005930) 또는 종목명(예: 현대차, 카카오)을 직접 입력하여 빠르게 조회할 수 있습니다."
+            placeholder=f"예: 005930 또는 SK하이닉스",
+            help="종목코드 6자리(예: 005930) 또는 종목명(예: SK하이닉스, 현대차)을 직접 입력하여 빠르게 조회할 수 있습니다."
         ).strip()
 
         submitted = st.form_submit_button("📊 조회하기", use_container_width=True, type="primary")
@@ -184,21 +231,11 @@ with col_left:
         if submitted:
             new_code = None
             if manual_input:
-                # 1) 6자리 코드 직접 입력인 경우 (예: 005930)
-                if len(manual_input) == 6 and manual_input.isalnum():
-                    new_code = manual_input
-                # 2) 종목명을 입력한 경우 (예: 카카오, 현대차)
-                elif not tickers_df.empty and '종목' in tickers_df.columns:
-                    matched = tickers_df[tickers_df['종목'].str.strip() == manual_input]
-                    if not matched.empty:
-                        new_code = str(matched.index[0]).strip()
-                    else:
-                        # 부분 일치 검색
-                        partial = tickers_df[tickers_df['종목'].str.contains(manual_input, regex=False)]
-                        if not partial.empty:
-                            new_code = str(partial.index[0]).strip()
-                        else:
-                            st.warning(f"입력하신 '{manual_input}'에 해당하는 종목을 찾을 수 없습니다.")
+                resolved = resolve_ticker_code(manual_input, tickers_df)
+                if resolved:
+                    new_code = resolved
+                else:
+                    st.warning(f"입력하신 '{manual_input}'에 해당하는 종목을 찾을 수 없습니다. 종목명이나 6자리 코드를 다시 확인해 주세요.")
             elif selected_ticker:
                 new_code = selected_ticker
 
