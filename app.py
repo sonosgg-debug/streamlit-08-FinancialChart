@@ -40,21 +40,37 @@ st.markdown("""
 
 
 # -----------------------------------------------------------------------------
-# 1. 종목 리스트 로드 (35 ShortSelling 방식 적용)
+# 1. 종목 리스트 로드 (33 NetBuyerChart 방식 + 로컬 CSV & 다중 폴백)
 # -----------------------------------------------------------------------------
 @st.cache_data(ttl=86400)
 def load_stock_tickers():
-    """상장 종목 전체 리스트 가져오기 (pykrx StockTicker 및 FDR 폴백)"""
+    """상장 종목 전체 리스트 가져오기 (로컬 CSV -> pykrx StockTicker -> FDR -> 내장 대표주)"""
+    csv_path = os.path.join(os.path.dirname(__file__), "krx_tickers.csv")
+
+    # 1. 로컬 krx_tickers.csv 최우선 로드 (해외 IP 차단/네트워크 지연 원천 차단)
+    if os.path.exists(csv_path):
+        try:
+            df = pd.read_csv(csv_path, dtype={'티커': str}, index_col='티커')
+            if not df.empty and '종목' in df.columns:
+                return df
+        except Exception:
+            pass
+
+    # 2. pykrx StockTicker 시도
     try:
         from pykrx.website.krx.market.ticker import StockTicker
         st_ticker = StockTicker()
         df = st_ticker.listed
         if not df.empty and '종목' in df.columns:
+            try:
+                df.to_csv(csv_path, encoding='utf-8-sig')
+            except Exception:
+                pass
             return df
     except Exception:
         pass
-    
-    # Fallback to FinanceDataReader
+
+    # 3. Fallback to FinanceDataReader
     try:
         import FinanceDataReader as fdr
         df = fdr.StockListing('KRX')
@@ -62,7 +78,22 @@ def load_stock_tickers():
         df['종목'] = df['Name']
         return df
     except Exception:
-        return pd.DataFrame()
+        pass
+
+    # 4. 내장 대표 30개 우량주 fallback (최악의 오프라인/네트워크 차단 환경 대비)
+    fallback_data = {
+        '005930': '삼성전자', '000660': 'SK하이닉스', '373220': 'LG에너지솔루션',
+        '207940': '삼성바이오로직스', '005380': '현대차', '000270': '기아',
+        '068270': '셀트리온', '105560': 'KB금융', '055550': '신한지주',
+        '035420': 'NAVER', '005490': 'POSCO홀딩스', '012330': '현대모비스',
+        '035720': '카카오', '028260': '삼성물산', '051910': 'LG화학',
+        '086520': '에코프로비엠', '247540': '에코프로', '006400': '삼성SDI',
+        '032830': '삼성생명', '015760': '한국전력', '329180': 'HD현대중공업',
+        '010130': '고려아연', '033780': 'KT&G', '003550': 'LG',
+        '018260': '삼성에스디에스', '017670': 'SK텔레콤', '030200': 'KT',
+        '034730': 'SK', '323410': '카카오뱅크', '259960': '크래프톤'
+    }
+    return pd.DataFrame(list(fallback_data.items()), columns=['티커', '종목']).set_index('티커')
 
 
 CNS_METRIC_OPTIONS = {
@@ -106,33 +137,74 @@ if "selected_code" not in st.session_state:
 col_left, col_right = st.columns([1, 3.2], gap="large")
 
 # ==============================================================================
-# LEFT PANEL: 종목 선택 입력 폼 & 조회 버튼 (35 ShortSelling 방식)
+# LEFT PANEL: 종목 선택 입력 폼 & 조회 버튼 (33 NetBuyerChart 방식 적용)
 # ==============================================================================
 with col_left:
     st.subheader("🔍 종목 선택")
 
     tickers_df = load_stock_tickers()
-    if not tickers_df.empty:
-        # selectbox 표시용 포맷팅: 종목명 (티커) - 35 ShortSelling 방식
-        tickers_df['display_name'] = tickers_df['종목'] + " (" + tickers_df.index + ")"
-        default_index = 0
-        if st.session_state.selected_code in tickers_df.index:
-            default_index = int(tickers_df.index.get_loc(st.session_state.selected_code))
+    curr_code = st.session_state.get("selected_code", "005930")
 
-        with st.form(key="stock_search_form"):
+    with st.form(key="stock_selection_form"):
+        selected_ticker = None
+
+        if not tickers_df.empty and '종목' in tickers_df.columns:
+            # 33 NetBuyerChart 방식: 종목명 (티커) 포맷팅 및 sorted() 가나다순 정렬
+            tickers_df['display_name'] = tickers_df['종목'].astype(str) + " (" + tickers_df.index.astype(str) + ")"
+            display_names = sorted(tickers_df['display_name'].tolist())
+
+            # 현재 선택된 종목 코드에 해당하는 인덱스 탐색 (기본: 삼성전자 005930)
+            default_idx = 0
+            for idx, name in enumerate(display_names):
+                if f"({curr_code})" in name:
+                    default_idx = idx
+                    break
+
             selected_display = st.selectbox(
-                "종목명(코드) 입력 / 선택",
-                options=tickers_df['display_name'].tolist(),
-                index=default_index,
-                help="키보드로 종목명(예: 삼성전자) 또는 종목코드(예: 005930)를 입력하여 검색할 수 있습니다."
+                "종목 검색 및 선택",
+                options=display_names,
+                index=default_idx,
+                help="키보드로 종목명(예: 삼성전자, 카카오) 또는 종목코드(예: 005930)를 입력하여 검색할 수 있습니다."
             )
-            submitted = st.form_submit_button("조회", use_container_width=True, type="primary")
+            if selected_display:
+                selected_ticker = selected_display.split("(")[-1].replace(")", "").strip()
+        else:
+            st.warning("⚠️ 종목 목록을 불러오지 못했습니다. 아래에 종목코드를 직접 입력해 주세요.")
 
-            if submitted and selected_display:
-                code_from_display = selected_display.split("(")[-1].replace(")", "").strip()
-                if st.session_state.selected_code != code_from_display:
-                    st.session_state.selected_code = code_from_display
-                    st.rerun()
+        # 종목코드 또는 종목명 직접 입력란
+        manual_input = st.text_input(
+            "또는 종목명 / 종목코드 직접 입력",
+            value="",
+            placeholder=f"예: 005930 또는 삼성전자",
+            help="종목코드 6자리(예: 005930) 또는 종목명(예: 현대차, 카카오)을 직접 입력하여 빠르게 조회할 수 있습니다."
+        ).strip()
+
+        submitted = st.form_submit_button("📊 조회하기", use_container_width=True, type="primary")
+
+        if submitted:
+            new_code = None
+            if manual_input:
+                # 1) 6자리 코드 직접 입력인 경우 (예: 005930)
+                if len(manual_input) == 6 and manual_input.isalnum():
+                    new_code = manual_input
+                # 2) 종목명을 입력한 경우 (예: 카카오, 현대차)
+                elif not tickers_df.empty and '종목' in tickers_df.columns:
+                    matched = tickers_df[tickers_df['종목'].str.strip() == manual_input]
+                    if not matched.empty:
+                        new_code = str(matched.index[0]).strip()
+                    else:
+                        # 부분 일치 검색
+                        partial = tickers_df[tickers_df['종목'].str.contains(manual_input, regex=False)]
+                        if not partial.empty:
+                            new_code = str(partial.index[0]).strip()
+                        else:
+                            st.warning(f"입력하신 '{manual_input}'에 해당하는 종목을 찾을 수 없습니다.")
+            elif selected_ticker:
+                new_code = selected_ticker
+
+            if new_code and new_code != st.session_state.selected_code:
+                st.session_state.selected_code = new_code
+                st.rerun()
 
     active_code = st.session_state.selected_code
 
