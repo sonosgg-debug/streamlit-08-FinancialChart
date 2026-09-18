@@ -330,6 +330,23 @@ with col_left:
                 st.session_state.selected_code = new_code
                 st.rerun()
 
+    # 빠른 대표 종목 바로가기 버튼
+    st.markdown("<small style='color:#94A3B8;'>주요 대표 종목 바로가기</small>", unsafe_allow_html=True)
+    quick_cols = st.columns(3)
+    quick_picks = [
+        ("삼성전자", "005930"),
+        ("SK하이닉스", "000660"),
+        ("SK스퀘어", "402340"),
+        ("삼성전기", "009150"),
+        ("LG에너지솔루션", "373220"),
+        ("현대차", "005380")
+    ]
+    for idx, (q_name, q_code) in enumerate(quick_picks):
+        with quick_cols[idx % 3]:
+            if st.button(q_name, key=f"quick_{q_code}", use_container_width=True):
+                st.session_state.selected_code = q_code
+                st.rerun()
+
     active_code = st.session_state.selected_code
 
     # Company Info Meta Card
