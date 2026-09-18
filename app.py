@@ -29,6 +29,15 @@ st.markdown("""
     html, body, [class*="css"] {
         font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
     }
+
+    /* Headers & Main Title (00 Bookmarks 테마 일치) */
+    h1, .main h1, [data-testid="stHeadingWithActionElements"] h1, .main-title {
+        color: #8AB4F8 !important;
+        -webkit-text-fill-color: #8AB4F8 !important;
+        font-size: 1.9rem !important;
+        font-weight: 800 !important;
+        text-align: center !important;
+    }
     .block-container {
         padding-top: 4.5rem !important;
         padding-bottom: 3rem !important;
@@ -360,8 +369,7 @@ with col_left:
 # RIGHT PANEL: 제목 및 12개 차트 순차적 표시
 # ==============================================================================
 with col_right:
-    # 1. Right Panel Title Header (35 ShortSelling style #8AB4F8)
-    st.markdown("<h1 style='text-align: center; color: #8AB4F8 !important; font-size: 1.9rem !important; font-weight: 800 !important; -webkit-text-fill-color: #8AB4F8 !important; margin-bottom: 8px;'><span style='color: #8AB4F8 !important;'>한국 증시 종목별 실적 및 컨센서스 추이</span></h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='main-title' style='text-align: center; color: #8AB4F8 !important; font-size: 1.9rem !important; font-weight: 800 !important; -webkit-text-fill-color: #8AB4F8 !important; margin-bottom: 8px;'><span style='color: #8AB4F8 !important; -webkit-text-fill-color: #8AB4F8 !important;'>한국 증시 종목별 실적 및 컨센서스 추이</span></h1>", unsafe_allow_html=True)
     st.markdown(f"<p style='text-align: center; color: #BDC1C6; font-size: 1.0rem; margin-bottom: 16px;'>📌 <b>{info.get('cmp_nm', active_code)}</b> ({active_code}) 실적 및 컨센서스 분석 대시보드</p>", unsafe_allow_html=True)
     st.divider()
 
