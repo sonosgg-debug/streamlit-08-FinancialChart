@@ -361,8 +361,8 @@ with col_left:
 # ==============================================================================
 with col_right:
     # 1. Right Panel Title Header (35 ShortSelling style #8AB4F8)
-    st.markdown("<h1 style='color: #8AB4F8; margin-bottom: 8px; font-weight: 700;'>한국 증시 종목별 실적 및 컨센서스 추이</h1>", unsafe_allow_html=True)
-    st.markdown(f"<p style='color: #BDC1C6; font-size: 1.0rem; margin-bottom: 16px;'>📌 <b>{info.get('cmp_nm', active_code)}</b> ({active_code}) 실적 및 컨센서스 분석 대시보드</p>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; color: #8AB4F8; font-size: 1.9rem; font-weight: 800; margin-bottom: 8px;'>한국 증시 종목별 실적 및 컨센서스 추이</h1>", unsafe_allow_html=True)
+    st.markdown(f"<p style='text-align: center; color: #BDC1C6; font-size: 1.0rem; margin-bottom: 16px;'>📌 <b>{info.get('cmp_nm', active_code)}</b> ({active_code}) 실적 및 컨센서스 분석 대시보드</p>", unsafe_allow_html=True)
     st.divider()
 
     # Fetch Data with spinner
