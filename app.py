@@ -322,31 +322,13 @@ with st.sidebar:
             if selected_display:
                 selected_ticker = selected_display.split("(")[-1].replace(")", "").strip()
         else:
-            st.warning("⚠️ 종목 목록을 불러오지 못했습니다. 아래에 종목코드를 직접 입력해 주세요.")
-
-        # 종목코드 또는 종목명 직접 입력란
-        manual_input = st.text_input(
-            "종목명 / 종목코드 직접 입력",
-            value="",
-            placeholder=f"예: 005930 또는 SK하이닉스",
-            help="종목코드 6자리(예: 005930) 또는 종목명(예: SK하이닉스, 현대차)을 직접 입력하여 빠르게 조회할 수 있습니다."
-        ).strip()
+            st.warning("⚠️ 종목 목록을 불러오지 못했습니다. 네트워크 상태를 확인해 주세요.")
 
         submitted = st.form_submit_button("📊 조회하기", use_container_width=True, type="primary")
 
-        if submitted:
-            new_code = None
-            if manual_input:
-                resolved = resolve_ticker_code(manual_input, tickers_df)
-                if resolved:
-                    new_code = resolved
-                else:
-                    st.warning(f"입력하신 '{manual_input}'에 해당하는 종목을 찾을 수 없습니다. 종목명이나 6자리 코드를 다시 확인해 주세요.")
-            elif selected_ticker:
-                new_code = selected_ticker
-
-            if new_code and new_code != st.session_state.selected_code:
-                st.session_state.selected_code = new_code
+        if submitted and selected_ticker:
+            if selected_ticker != st.session_state.selected_code:
+                st.session_state.selected_code = selected_ticker
                 st.rerun()
 
     # 시총 상위주 바로가기 버튼
