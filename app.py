@@ -16,7 +16,7 @@ importlib.reload(fnguide_api)
 FAVICON_PATH = os.path.join(os.path.dirname(__file__), "favicon.png")
 
 st.set_page_config(
-    page_title="한국 증시 종목별 실적 및 컨센서스 추이",
+    page_title="한국증시 종목 기본적 분석",
     page_icon=FAVICON_PATH if os.path.exists(FAVICON_PATH) else None,
     layout="wide",
     initial_sidebar_state="expanded"
@@ -369,7 +369,7 @@ with col_left:
 # RIGHT PANEL: 제목 및 12개 차트 순차적 표시
 # ==============================================================================
 with col_right:
-    st.markdown("<h1 class='main-title' style='text-align: center; color: #8AB4F8 !important; font-size: 1.9rem !important; font-weight: 800 !important; -webkit-text-fill-color: #8AB4F8 !important; margin-bottom: 8px;'><span style='color: #8AB4F8 !important; -webkit-text-fill-color: #8AB4F8 !important;'>한국 증시 종목별 실적 및 컨센서스 추이</span></h1>", unsafe_allow_html=True)
+    st.markdown("<h1 class='main-title' style='text-align: center; color: #8AB4F8 !important; font-size: 1.9rem !important; font-weight: 800 !important; -webkit-text-fill-color: #8AB4F8 !important; margin-bottom: 8px;'><span style='color: #8AB4F8 !important; -webkit-text-fill-color: #8AB4F8 !important;'>한국증시 종목 기본적 분석</span></h1>", unsafe_allow_html=True)
     st.markdown(f"<p style='text-align: center; color: #BDC1C6; font-size: 1.0rem; margin-bottom: 16px;'>📌 <b>{info.get('cmp_nm', active_code)}</b> ({active_code}) 실적 및 컨센서스 분석 대시보드</p>", unsafe_allow_html=True)
     st.divider()
 
