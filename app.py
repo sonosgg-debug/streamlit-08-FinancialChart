@@ -324,7 +324,7 @@ with st.sidebar:
         else:
             st.warning("⚠️ 종목 목록을 불러오지 못했습니다. 네트워크 상태를 확인해 주세요.")
 
-        submitted = st.form_submit_button("📊 조회하기", use_container_width=True, type="primary")
+        submitted = st.form_submit_button("조회", use_container_width=True, type="primary")
 
         if submitted and selected_ticker:
             if selected_ticker != st.session_state.selected_code:
