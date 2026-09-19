@@ -314,7 +314,7 @@ with st.sidebar:
                     break
 
             selected_display = st.selectbox(
-                "종목 검색 및 선택",
+                "종목명(코드) 검색 / 선택",
                 options=display_names,
                 index=default_idx,
                 help="키보드로 종목명(예: 삼성전자, 카카오) 또는 종목코드(예: 005930)를 입력하여 검색할 수 있습니다."
