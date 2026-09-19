@@ -34,12 +34,14 @@ st.markdown("""
     h1, .main h1, [data-testid="stHeadingWithActionElements"] h1, .main-title {
         color: #8AB4F8 !important;
         -webkit-text-fill-color: #8AB4F8 !important;
-        font-size: 1.9rem !important;
+        font-size: 2.0rem !important;
         font-weight: 800 !important;
         text-align: center !important;
     }
+    .main .block-container,
+    [data-testid="stMainBlockContainer"],
     .block-container {
-        padding-top: 4.5rem !important;
+        padding-top: 2.0rem !important;
         padding-bottom: 3rem !important;
         padding-left: 2rem !important;
         padding-right: 2rem !important;
@@ -324,7 +326,7 @@ with st.sidebar:
         else:
             st.warning("⚠️ 종목 목록을 불러오지 못했습니다. 네트워크 상태를 확인해 주세요.")
 
-        submitted = st.form_submit_button("조회", use_container_width=True, type="primary")
+        submitted = st.form_submit_button("🔍 조회", use_container_width=True, type="primary")
 
         if submitted and selected_ticker:
             if selected_ticker != st.session_state.selected_code:
@@ -389,7 +391,7 @@ with st.sidebar:
 # ==============================================================================
 # 메인 패널: 제목 및 12개 차트 순차적 표시
 # ==============================================================================
-st.markdown("<h1 class='main-title' style='text-align: center; color: #8AB4F8 !important; font-size: 1.9rem !important; font-weight: 800 !important; -webkit-text-fill-color: #8AB4F8 !important; margin-bottom: 8px;'><span style='color: #8AB4F8 !important; -webkit-text-fill-color: #8AB4F8 !important;'>한국 증시 종목별 실적 및 컨센서스 추이</span></h1>", unsafe_allow_html=True)
+st.markdown("<h1 class='main-title' style='text-align: center; color: #8AB4F8 !important; font-size: 2.0rem !important; font-weight: 800 !important; -webkit-text-fill-color: #8AB4F8 !important; margin-bottom: 8px;'><span style='color: #8AB4F8 !important; -webkit-text-fill-color: #8AB4F8 !important;'>한국 증시 종목별 실적 및 컨센서스 추이</span></h1>", unsafe_allow_html=True)
 st.markdown(f"<p style='text-align: center; color: #BDC1C6; font-size: 1.0rem; margin-bottom: 16px;'>📌 <b>{info.get('cmp_nm', active_code)}</b> ({active_code}) 실적 및 컨센서스 분석 대시보드</p>", unsafe_allow_html=True)
 st.divider()
 
@@ -650,3 +652,6 @@ else:
                 st.dataframe(display_df, use_container_width=True)
             else:
                 st.info("증권사 적정주가 리포트 데이터가 없습니다.")
+
+st.markdown("---")
+st.markdown("<div style='text-align: center; color: #64748b; font-size: 0.8rem; margin-top: 8px; margin-bottom: 24px; line-height: 1.6;'>⚠️ 본 서비스에서 제공하는 모든 정보는 투자 참고용이며, 투자의 최종 결정과 책임은 투자자 본인에게 있습니다.</div>", unsafe_allow_html=True)
